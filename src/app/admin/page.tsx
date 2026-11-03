@@ -1,5 +1,6 @@
-import { Col, Container, Row, Table } from 'react-bootstrap';
-import StuffItemAdmin from '@/components/StuffItemAdmin';
+import { Col, Container, Row } from 'react-bootstrap';
+// import StuffItemAdmin from '@/components/StuffItemAdmin';
+import ContactCardAdmin from '@/components/ContactCardAdmin';
 import { prisma } from '@/lib/prisma';
 import { adminProtectedPage } from '@/lib/page-protection';
 import { auth } from '@/lib/auth';
@@ -11,15 +12,35 @@ const AdminPage = async () => {
       user: { email: string; id: string; name: string };
     } | null,
   );
-  const stuff = await prisma.stuff.findMany({});
-  const users = await prisma.user.findMany({});
+  // const stuff = await prisma.stuff.findMany({});
+  const contacts = await prisma.$queryRaw<Array<{
+    id: number;
+    firstName: string;
+    lastName: string;
+    address: string;
+    image: string;
+    description: string;
+    owner: string;
+  }>>`
+    SELECT "id", "firstName", "lastName", "address", "image", "description", "owner"
+    FROM "Contact"
+  `;
+  // const users = await prisma.user.findMany({});
 
   return (
     <main>
       <Container id="list" fluid className="py-3">
         <Row>
           <Col>
-            <h1>List Stuff Admin</h1>
+            <h1 className="text-center">List Contacts (Admin)</h1>
+            <Row xs={1} md={2} lg={3} className="g-4">
+              {contacts.map((contact) => (
+                <Col key={`Contact-${contact.id}`}>
+                  <ContactCardAdmin contact={contact} />
+                </Col>
+              ))}
+            </Row>
+            {/* <h1 className="mt-4">List Stuff Admin</h1>
             <Table striped bordered hover>
               <thead>
                 <tr>
@@ -56,7 +77,7 @@ const AdminPage = async () => {
                   </tr>
                 ))}
               </tbody>
-            </Table>
+            </Table> */}
           </Col>
         </Row>
       </Container>

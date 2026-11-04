@@ -16,7 +16,7 @@ const ListPage = async () => {
   );
   const owner = session?.user?.email || '';
   const contacts = await prisma.$queryRaw<ContactInfo[]>`
-    SELECT "firstName", "lastName", "address", "image", "description"
+    SELECT "id", "firstName", "lastName", "address", "image", "description"
     FROM "Contact"
     WHERE "owner" = ${owner}
   `;

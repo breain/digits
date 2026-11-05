@@ -77,6 +77,21 @@ export async function addContact(contact: {
 }
 
 /**
+ * Adds a note to a contact.
+ * @param note, an object with the note text, contact id, and owner.
+ */
+export async function addNote(note: { note: string; contactId: number; owner: string }) {
+  await prisma.note.create({
+    data: {
+      note: note.note,
+      contactId: note.contactId,
+      owner: note.owner,
+    },
+  });
+  redirect('/list');
+}
+
+/**
  * Edits an existing contact in the database.
  * @param contact, an object with the contact fields and owner.
  */

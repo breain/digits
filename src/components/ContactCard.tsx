@@ -1,10 +1,12 @@
 'use client';
 
-import { Card, Image } from 'react-bootstrap';
+import { Card, Image, ListGroup } from 'react-bootstrap';
 import Link from 'next/link';
-import type { Contact as ContactInfo } from '@/lib/validationSchemas';
+import AddNoteForm from '@/components/AddNoteForm';
+import NoteItem from '@/components/NoteItem';
+import type { Contact as ContactInfo, Note } from '@/lib/validationSchemas';
 
-const Contact = ({ contact }: { contact: ContactInfo }) => (
+const Contact = ({ contact, notes }: { contact: ContactInfo; notes: Note[] }) => (
   <Card className="h-100">
     <Card.Header>
       <Image src={contact.image} alt={`${contact.firstName} ${contact.lastName}`} width={75} />
@@ -15,6 +17,12 @@ const Contact = ({ contact }: { contact: ContactInfo }) => (
     </Card.Header>
     <Card.Body>
       <Card.Text>{contact.description}</Card.Text>
+        <ListGroup variant="flush">
+        {notes.map((note) => (
+          <NoteItem key={note.id} note={note} />
+        ))}
+      </ListGroup>
+      <AddNoteForm contactId={contact.id} />
     </Card.Body>
     <Card.Footer>
       <Link href={`/edit/contact/${contact.id}`}>Edit</Link>

@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { loggedInProtectedPage } from '@/lib/page-protection';
 import { auth } from '@/lib/auth';
 import Contact from '@/components/ContactCard';
-import type { Contact as ContactInfo } from '@/lib/validationSchemas';
+import type { Contact as ContactInfo, Note } from '@/lib/validationSchemas';
 
 /** Render the contacts page for the logged in user. */
 const ListPage = async () => {
@@ -20,16 +20,21 @@ const ListPage = async () => {
     FROM "Contact"
     WHERE "owner" = ${owner}
   `;
+  const notes = await prisma.$queryRaw<Note[]>`
+    SELECT "id", "contactId", "note", "owner", "createdAt"
+    FROM "Note"
+    WHERE "owner" = ${owner}
+  `;
   return (
     <main>
       <Container id="list" fluid className="py-3">
         <Row>
           <Col>
-            <h2 className="text-center">Contacts</h2>
+            <h2 className="text-center">List Contacts</h2>
             <Row xs={1} md={2} lg={3} className="g-4">
               {contacts.map((item) => (
                 <Col key={`Contact-${item.firstName}`}>
-                  <Contact contact={item} />
+                  <Contact contact={item} notes={notes.filter((note) => note.contactId === item.id)} />
                 </Col>
               ))}
             </Row>
